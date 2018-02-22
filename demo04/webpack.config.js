@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const HtmlwebpackPlugin = require('html-webpack-plugin');
 
@@ -26,10 +27,16 @@ module.exports = {
       }
     }, {
       test: /\.css$/,
-      use: ['style-loader', 'css-loader']
+        use: ExtractTextPlugin.extract({
+          publicPath: '../',
+          use: 'css-loader'
+        })
     }, {
       test: /\.scss$/,
-      use: ['style-loader', 'css-loader', 'sass-loader']
+        use: ExtractTextPlugin.extract({
+          publicPath: '../',
+          use: ['css-loader', 'sass-loader']
+        })
     }, {
       test: /\.(png|jpg)$/,
       use: [{
@@ -42,6 +49,9 @@ module.exports = {
     }]
   },
   plugins: [
+    new ExtractTextPlugin({
+      filename: 'css/[name].bundle.css?v=[contenthash:8]'
+    }),
     new UglifyJsPlugin(),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'common',
