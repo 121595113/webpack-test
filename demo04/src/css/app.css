@@ -1,4 +1,7 @@
 body {
-  background-color: red;
-  background: url('../images/big.png');
+    background-color: red;
+}
+
+body {
+    background-color: yellow;
 }

@@ -4,6 +4,11 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const HtmlwebpackPlugin = require('html-webpack-plugin');
 
+const helpers = require('../helpers');
+const isWebpackDevServer = helpers.isWebpackDevServer();
+const emptyFunction = () => {};
+
+
 module.exports = {
   entry: {
     // common: ['common'],
@@ -12,7 +17,7 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, './dist'),
-    publicPath: './',
+    publicPath: isWebpackDevServer ? '/' : './',
     filename: 'js/[name].js'
   },
   module: {
@@ -27,16 +32,18 @@ module.exports = {
       }
     }, {
       test: /\.css$/,
-        use: ExtractTextPlugin.extract({
-          publicPath: '../',
-          use: 'css-loader'
-        })
+      use: isWebpackDevServer ? ['style-loader', 'css-loader'] : ExtractTextPlugin.extract({
+        fallback: 'style-loader',
+        publicPath: '../',
+        use: 'css-loader'
+      })
     }, {
       test: /\.scss$/,
-        use: ExtractTextPlugin.extract({
-          publicPath: '../',
-          use: ['css-loader', 'sass-loader']
-        })
+      use: isWebpackDevServer ? ['style-loader', 'css-loader', 'sass-loader'] : ExtractTextPlugin.extract({
+        fallback: 'style-loader',
+        publicPath: '../',
+        use: ['css-loader', 'sass-loader']
+      })
     }, {
       test: /\.(png|jpg)$/,
       use: [{
@@ -49,7 +56,7 @@ module.exports = {
     }]
   },
   plugins: [
-    new ExtractTextPlugin({
+    isWebpackDevServer ? emptyFunction : new ExtractTextPlugin({
       filename: 'css/[name].bundle.css?v=[contenthash:8]'
     }),
     new UglifyJsPlugin(),
