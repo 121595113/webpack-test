@@ -1,6 +1,8 @@
 require('../css/app.css');
 require('../css/test.scss');
 
+console.log($.fn);
+
 // 图片
 let img1 = document.createElement('img');
 img1.src = require('../images/small.png');

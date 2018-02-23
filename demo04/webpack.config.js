@@ -59,6 +59,10 @@ module.exports = {
       filename: 'css/[name].bundle.css?v=[contenthash:8]'
     }),
     new UglifyJsPlugin(),
+    // new webpack.ProvidePlugin({
+    //   $: 'jquery',
+    //   jQuery: 'jquery'
+    // }),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'common',
       filename: 'js/common.js',
@@ -85,6 +89,7 @@ module.exports = {
     }),
   ],
   devServer: {
+    contentBase: path.join(__dirname, '../'),
     port: 8080,
     // host: '0.0.0.0',
     historyApiFallback: true,
