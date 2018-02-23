@@ -2,7 +2,7 @@
   "name": "webpack-demo4",
   "version": "1.0.0",
   "scripts": {
-    "dev": "webpack-dev-server --open",
+    "dev": "webpack-dev-server --open chrome",
     "build": "webpack -p"
   }
 }

@@ -8,7 +8,6 @@ const helpers = require('../helpers');
 const isWebpackDevServer = helpers.isWebpackDevServer();
 const emptyFunction = () => {};
 
-
 module.exports = {
   entry: {
     // common: ['common'],
