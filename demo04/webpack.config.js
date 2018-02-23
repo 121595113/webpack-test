@@ -89,7 +89,7 @@ module.exports = {
     }),
   ],
   devServer: {
-    contentBase: path.join(__dirname, '../'),
+    contentBase: [path.join(__dirname, '../')],
     port: 8080,
     // host: '0.0.0.0',
     historyApiFallback: true,
