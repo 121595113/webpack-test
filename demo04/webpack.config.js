@@ -84,5 +84,21 @@ module.exports = {
       hash: true,
       chunks: ['common', 'main2']
     }),
-  ]
+  ],
+  devServer: {
+    port: 8080,
+    // host: '0.0.0.0',
+    historyApiFallback: true,
+    disableHostCheck: true,
+    watchOptions: {
+      aggregateTimeout: 300,
+      poll: 1000
+    },
+    proxy: {
+      // '/api/v1': {
+      //   target: 'http://192.168.1.81:4500/',
+      //   changeOrigin: true
+      // }
+    }
+  },
 };
