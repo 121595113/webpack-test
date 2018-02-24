@@ -26,7 +26,7 @@ module.exports = {
     publicPath: isWebpackDevServer ? '/' : './',
     filename: 'js/[name].js'
   },
-  devtool: isWebpackDevServer ? '#source-map' : 'none',
+  devtool: isWebpackDevServer ? '#cheap-module-eval-source-map' : 'none',
   module: {
     rules: [{
       test: /\.js[x]?$/,
