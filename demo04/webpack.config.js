@@ -8,6 +8,13 @@ const helpers = require('../helpers');
 const isWebpackDevServer = helpers.isWebpackDevServer();
 const emptyFunction = () => {};
 
+const cssLoader = ['style-loader', {
+  loader: 'css-loader',
+  options: {
+    sourceMap: true,
+  }
+}];
+
 module.exports = {
   entry: {
     // common: ['common'],
@@ -19,6 +26,7 @@ module.exports = {
     publicPath: isWebpackDevServer ? '/' : './',
     filename: 'js/[name].js'
   },
+  devtool: isWebpackDevServer ? '#source-map' : 'none',
   module: {
     rules: [{
       test: /\.js[x]?$/,
@@ -31,14 +39,14 @@ module.exports = {
       }
     }, {
       test: /\.css$/,
-      use: isWebpackDevServer ? ['style-loader', 'css-loader'] : ExtractTextPlugin.extract({
+      use: isWebpackDevServer ? [...cssLoader] : ExtractTextPlugin.extract({
         fallback: 'style-loader',
         publicPath: '../',
         use: 'css-loader'
       })
     }, {
       test: /\.scss$/,
-      use: isWebpackDevServer ? ['style-loader', 'css-loader', 'sass-loader'] : ExtractTextPlugin.extract({
+      use: isWebpackDevServer ? [...cssLoader, 'sass-loader'] : ExtractTextPlugin.extract({
         fallback: 'style-loader',
         publicPath: '../',
         use: ['css-loader', 'sass-loader']
@@ -58,7 +66,9 @@ module.exports = {
     isWebpackDevServer ? emptyFunction : new ExtractTextPlugin({
       filename: 'css/[name].bundle.css?v=[contenthash:8]'
     }),
-    new UglifyJsPlugin(),
+    new UglifyJsPlugin({
+      sourceMap: isWebpackDevServer ? true : false,
+    }),
     // new webpack.ProvidePlugin({
     //   $: 'jquery',
     //   jQuery: 'jquery'
@@ -85,7 +95,7 @@ module.exports = {
       filename: 'main2.html',
       template: 'src/index.html',
       hash: true,
-      chunks: ['common', 'main2']
+      chunks: ['common', 'main3']
     }),
   ],
   devServer: {
