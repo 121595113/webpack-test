@@ -15,7 +15,7 @@ $ git clone https://github.com/121595113/webpack-test.git
 Install the dependencies.
 
 ```bash
-$ cd webpack-demos
+$ cd webpack-test
 $ npm install
 ```
 
