@@ -1,4 +1,5 @@
 const path = require('path');
+const glob = require('glob');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
@@ -15,11 +16,38 @@ const cssLoader = ['style-loader', {
   }
 }];
 
+// entry
+const filesEntry = glob.sync('src/**/!(_)*.js');
+let entrysObj = {};
+filesEntry.forEach(filePath => {
+  entrysObj[path.parse(filePath).name] = `./${filePath}`;
+});
+
+// htmlwebpackPlugins
+const filesHtml = glob.sync('src/**/!(_)*.{html,htm}');
+let htmlwebpackPlugins = [];
+filesHtml.forEach(filePath => {
+  let pathObj = path.parse(filePath);
+  htmlwebpackPlugins.push(new HtmlwebpackPlugin({
+    title: 'Webpack-demos',
+    filename: pathObj.base,
+    template: filePath,
+    hash: true,
+    // minify: { //压缩HTML文件
+    //   removeComments: true, //移除HTML中的注释
+    //   collapseWhitespace: true, //删除空白符与换行符，
+    //   minifyCSS: true, //压缩style标签和style属性中的样式
+    //   minifyJS: true //压缩script标签和事件属性中的样式
+    // },
+    chunks: entrysObj[pathObj.name] ? ['common', pathObj.name] : []
+  }));
+});
+
+
 module.exports = {
   entry: {
     // common: ['common'],
-    main: './src/js/main.js',
-    main2: './src/js/main2.js',
+    ...entrysObj
   },
   output: {
     path: path.resolve(__dirname, './dist'),
@@ -77,26 +105,20 @@ module.exports = {
       name: 'common',
       filename: 'js/common.js',
     }),
-    new HtmlwebpackPlugin({
-      title: 'Webpack-demos',
-      filename: 'index.html',
-      template: 'src/index.html',
-      hash: true,
-      // minify: { //压缩HTML文件
-      //   removeComments: true, //移除HTML中的注释
-      //   collapseWhitespace: true, //删除空白符与换行符，
-      //   minifyCSS: true, //压缩style标签和style属性中的样式
-      //   minifyJS: true //压缩script标签和事件属性中的样式
-      // },
-      chunks: ['common', 'main']
-    }),
-    new HtmlwebpackPlugin({
-      title: 'Webpack-demos',
-      filename: 'main2.html',
-      template: 'src/index.html',
-      hash: true,
-      chunks: ['common', 'main3']
-    }),
+    ...htmlwebpackPlugins,
+    // new HtmlwebpackPlugin({
+    //   title: 'Webpack-demos',
+    //   filename: 'index.html',
+    //   template: 'src/index.html',
+    //   hash: true,
+    //   // minify: { //压缩HTML文件
+    //   //   removeComments: true, //移除HTML中的注释
+    //   //   collapseWhitespace: true, //删除空白符与换行符，
+    //   //   minifyCSS: true, //压缩style标签和style属性中的样式
+    //   //   minifyJS: true //压缩script标签和事件属性中的样式
+    //   // },
+    //   chunks: ['common', 'main']
+    // }),
   ],
   devServer: {
     contentBase: [path.join(__dirname, '../')],
