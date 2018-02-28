@@ -8,6 +8,7 @@ const HtmlwebpackPlugin = require('html-webpack-plugin');
 const helpers = require('../helpers');
 const isWebpackDevServer = helpers.isWebpackDevServer();
 const emptyFunction = () => {};
+const ytWebpackContentReplacePlugin = require('yt-webpack-content-replace-plugin');
 
 const cssLoader = ['style-loader', {
   loader: 'css-loader',
@@ -25,12 +26,14 @@ filesEntry.forEach(filePath => {
 
 // htmlwebpackPlugins
 const filesHtml = glob.sync('src/**/!(_)*.{html,htm}');
-let htmlwebpackPlugins = [];
+let htmlPlugins = [];
 filesHtml.forEach(filePath => {
   let pathObj = path.parse(filePath);
-  htmlwebpackPlugins.push(new HtmlwebpackPlugin({
+  let dir = pathObj.dir.split('/').slice(1).join('/');
+
+  htmlPlugins.push(new HtmlwebpackPlugin({
     title: 'Webpack-demos',
-    filename: pathObj.base,
+    filename: `${dir ? dir + '/': ''}${pathObj.base}`,
     template: filePath,
     hash: true,
     // minify: { //压缩HTML文件
@@ -43,12 +46,10 @@ filesHtml.forEach(filePath => {
   }));
 });
 
-
 module.exports = {
-  entry: {
+  entry: Object.assign({
     // common: ['common'],
-    ...entrysObj
-  },
+  }, entrysObj),
   output: {
     path: path.resolve(__dirname, './dist'),
     publicPath: isWebpackDevServer ? '/' : './',
@@ -105,7 +106,7 @@ module.exports = {
       name: 'common',
       filename: 'js/common.js',
     }),
-    ...htmlwebpackPlugins,
+    ...htmlPlugins,
     // new HtmlwebpackPlugin({
     //   title: 'Webpack-demos',
     //   filename: 'index.html',
@@ -119,6 +120,15 @@ module.exports = {
     //   // },
     //   chunks: ['common', 'main']
     // }),
+    isWebpackDevServer ? emptyFunction : new ytWebpackContentReplacePlugin({
+      rules: [{
+        test: /(src=['"])\.\/js/g,
+        use: '$1../js'
+      }],
+      exts: ['html'],
+      includes: ['page'],
+      path: path.resolve(__dirname, './dist')
+    }),
   ],
   devServer: {
     contentBase: [path.join(__dirname, '../')],
